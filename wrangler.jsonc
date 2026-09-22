@@ -5,4 +5,11 @@
 	"observability": {
 		"enabled": true,
 	},
+	"d1_databases": [
+		{
+			"binding": "p6",
+			"database_name": "p6",
+			"database_id": "<YOUR_D1_DATABASE_ID>"
+		}
+	]
 }
