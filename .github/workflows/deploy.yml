@@ -25,7 +25,7 @@ jobs:
 
       - name: Run unit tests and coverage
         run: |
-          npm install -D @vitest/coverage-v8
+
           echo "## 📊 Reporte de Cobertura de Pruebas" >> $GITHUB_STEP_SUMMARY
           echo '```text' >> $GITHUB_STEP_SUMMARY
           npx vitest run --coverage.enabled --coverage.reporter=text >> $GITHUB_STEP_SUMMARY
