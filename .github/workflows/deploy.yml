@@ -28,7 +28,7 @@ jobs:
 
           echo "## 📊 Reporte de Cobertura de Pruebas" >> $GITHUB_STEP_SUMMARY
           echo '```text' >> $GITHUB_STEP_SUMMARY
-          npx vitest run --coverage.enabled --coverage.reporter=text >> $GITHUB_STEP_SUMMARY
+          npx vitest run --coverage.enabled --coverage.reporter=text --coverage.provider=istanbul >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Deploy to Cloudflare Workers
