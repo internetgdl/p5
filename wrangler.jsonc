@@ -1,8 +1,19 @@
 {
-	"name": "nameless-bush-00f3",
-	"main": "src/index.ts",
-	"compatibility_date": "2026-08-14",
-	"observability": {
-		"enabled": true,
-	},
+  "name": "nameless-bush-00f3",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-14",
+
+  "observability": {
+    "enabled": true,
+  },
+
+  "env": {
+    "staging": {
+      "name": "nameless-bush-00f3-staging"
+    },
+
+    "production": {
+      "name": "nameless-bush-00f3"
+    }
+  }
 }
