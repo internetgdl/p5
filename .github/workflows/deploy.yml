@@ -6,10 +6,17 @@ on:
       - main
 
 jobs:
-  test-and-deploy:
+
+  # ==========================================
+  # 1. Tests
+  # ==========================================
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,14 +32,48 @@ jobs:
 
       - name: Run unit tests and coverage
         run: |
-
           echo "## 📊 Reporte de Cobertura de Pruebas" >> $GITHUB_STEP_SUMMARY
           echo '```text' >> $GITHUB_STEP_SUMMARY
-          npx vitest run --coverage.enabled --coverage.reporter=text --coverage.provider=istanbul >> $GITHUB_STEP_SUMMARY
+
+          npx vitest run \
+            --coverage.enabled \
+            --coverage.reporter=text \
+            --coverage.provider=istanbul \
+            >> $GITHUB_STEP_SUMMARY
+
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+
+  # ==========================================
+  # 2. Deploy a Cloudflare
+  # ==========================================
+  deploy:
+    name: Deploy to Cloudflare Workers
+
+    # Solo ejecuta este job si "test" terminó correctamente
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
