@@ -1,17 +1,31 @@
 {
-  "name": "nameless-bush-00f3",
+  "name": "nameless-bush-00f3-dev",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-14",
 
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
 
   "d1_databases": [
     {
       "binding": "p6",
-      "database_name": "p6",
-      "database_id": "ee6c381e-0895-4fe8-9f47-ef0e36505cbe"
+      "database_name": "p6-dev",
+      "database_id": "ID_DE_TU_D1_DEV"
     }
-  ]
+  ],
+
+  "env": {
+    "production": {
+      "name": "nameless-bush-00f3",
+
+      "d1_databases": [
+        {
+          "binding": "p6",
+          "database_name": "p6",
+          "database_id": "ee6c381e-0895-4fe8-9f47-ef0e36505cbe"
+        }
+      ]
+    }
+  }
 }
