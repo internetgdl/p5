@@ -4,10 +4,17 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
+
+  # ==========================================
+  # 1. TESTS
+  # ==========================================
   test:
+    name: Run tests
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
 
@@ -24,19 +31,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit tests and coverage
-        run: |
+      - name: Run unit tests
+        run: npx vitest run --coverage --reporter=default --reporter=github-actions
 
-          echo "## 📊 Reporte de Cobertura de Pruebas" >> $GITHUB_STEP_SUMMARY
-          echo '```text' >> $GITHUB_STEP_SUMMARY
-          npx vitest run --coverage.enabled --coverage.reporter=text --coverage.provider=istanbul >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+      - name: Report coverage
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
 
-  deploy-staging:
+
+  # ==========================================
+  # 2. DEPLOY DEV
+  # ==========================================
+  deploy-dev:
+    name: Deploy to DEV
+
     needs: test
+
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
+
+    environment: development
 
     steps:
       - name: Checkout
@@ -51,18 +67,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy to staging
+      - name: Deploy to DEV
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env staging
+          command: deploy
 
+
+  # ==========================================
+  # 3. DEPLOY PROD
+  # ==========================================
   deploy-prod:
-    needs: deploy-staging
+    name: Deploy to PROD
+
+    # PROD solamente comienza si DEV terminó correctamente
+    needs: deploy-dev
+
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
+
     environment: production
 
     steps:
@@ -78,7 +104,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy to production
+      - name: Deploy to PROD
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
